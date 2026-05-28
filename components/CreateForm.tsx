@@ -6,7 +6,7 @@ import { useWallet } from "@/lib/WalletContext";
 export default function CreateForm() {
   const { publicKey } = useWallet();
   const [form, setForm] = useState({
-    beneficiary: "", amount: "", startDate: "", durationDays: "",
+    beneficiary: "", amount: "", startDate: "", startTime: "00:00", durationDays: "",
     cliffDays: "0", kind: "Linear" as "Linear" | "Cliff", revocable: true,
   });
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
@@ -20,7 +20,12 @@ export default function CreateForm() {
     if (!publicKey) return;
     setStatus("loading"); setErrMsg("");
     try {
-      const startTs = Math.floor(new Date(form.startDate).getTime() / 1000);
+      // Combine date and time into a single timestamp
+      const [hours, minutes] = form.startTime.split(":").map(Number);
+      const startDateTime = new Date(form.startDate);
+      startDateTime.setHours(hours, minutes, 0, 0);
+      const startTs = Math.floor(startDateTime.getTime() / 1000);
+      
       const hash = await createSchedule(
         publicKey, form.beneficiary, parseFloat(form.amount),
         startTs, parseInt(form.durationDays), parseInt(form.cliffDays),
@@ -64,10 +69,14 @@ export default function CreateForm() {
         <Field label="Start Date">
           <input type="date" value={form.startDate} onChange={e => set("startDate", e.target.value)} required className="input" />
         </Field>
-        <Field label="Duration (days)">
-          <input type="number" placeholder="365" min="1" value={form.durationDays} onChange={e => set("durationDays", e.target.value)} required className="input" />
+        <Field label="Start Time">
+          <input type="time" value={form.startTime} onChange={e => set("startTime", e.target.value)} required className="input" />
         </Field>
       </div>
+
+      <Field label="Duration (days)">
+        <input type="number" placeholder="365" min="1" value={form.durationDays} onChange={e => set("durationDays", e.target.value)} required className="input" />
+      </Field>
 
       <Field label="Vesting Type">
         <div className="flex gap-3">

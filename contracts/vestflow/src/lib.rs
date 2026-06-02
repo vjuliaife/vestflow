@@ -521,6 +521,11 @@ impl VestFlowContract {
             .instance()
             .get(&DataKey::ScheduleCount)
             .unwrap_or(0);
+        // Schedule IDs are derived from a monotonic counter that is read,
+        // incremented, and written atomically within a single transaction.
+        // Soroban's single-threaded execution model guarantees no two
+        // transactions in the same ledger can observe the same counter value,
+        // so schedule ID collisions are impossible.
         let id = count + 1;
 
         // Pull tokens from grantor into the contract

@@ -7,6 +7,7 @@ import {
   truncate,
   vestingProgress,
   formatDate,
+  formatCliffDate,
   claimVested,
   revokeSchedule,
   parseContractError,
@@ -50,7 +51,7 @@ export default function ScheduleCard({
   );
   const claimableAmt = vested > schedule.claimed ? vested - schedule.claimed : 0n;
 
-  // SEP-41 token symbol support (upstream #165)
+  // SEP-41 token symbol support
   const isNative = schedule.token === NATIVE_TOKEN;
   const tokenSymbol = isNative ? "XLM" : `Token (${truncate(schedule.token, 4, 4)})`;
 
@@ -252,7 +253,7 @@ export default function ScheduleCard({
             <p className="text-xs text-zinc-500 mt-1.5">
               Unlocks on{" "}
               <span className="text-zinc-300">
-                {formatDate(schedule.start_time + schedule.cliff_duration)}
+                {formatCliffDate(schedule.cliff_duration, schedule.start_time)}
               </span>
             </p>
           )}

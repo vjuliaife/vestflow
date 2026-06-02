@@ -10,6 +10,7 @@ import {
   stroopsToXlm,
   vestingProgress,
   formatDate,
+  formatCliffDate,
   claimVested,
   revokeSchedule,
   parseContractError,
@@ -233,7 +234,7 @@ export default function ScheduleDetailPage() {
             {schedule.cliff_duration > 0 && (
               <div>
                 <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Cliff Date</p>
-                <p className="text-zinc-300">{formatDate(schedule.start_time + schedule.cliff_duration)}</p>
+                <p className="text-zinc-300">{formatCliffDate(schedule.cliff_duration, schedule.start_time)}</p>
               </div>
             )}
             <div>

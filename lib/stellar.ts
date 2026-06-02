@@ -262,9 +262,19 @@ export function vestingProgress(s: ScheduleData, now: number): number {
 }
 
 export function formatDate(ts: number): string {
+  if (!ts || ts <= 0) return "—";
   return new Date(ts * 1000).toLocaleDateString(undefined, {
     year: "numeric", month: "short", day: "numeric",
   });
+}
+
+/**
+ * Format a cliff timestamp for display.
+ * Returns "No cliff" when ts is 0 or cliff_duration is 0 (no cliff configured).
+ */
+export function formatCliffDate(cliffDuration: number, startTime: number): string {
+  if (!cliffDuration || cliffDuration <= 0) return "No cliff";
+  return formatDate(startTime + cliffDuration);
 }
 
 export function parseContractError(e: Error): string {

@@ -2,7 +2,7 @@
 import Navbar from "@/components/Navbar";
 import VestingChart from "@/components/VestingChart";
 import NotificationSubscription from "@/components/NotificationSubscription";
-import { formatDate, NETWORK } from "@/lib/stellar";
+import { formatDate, formatCliffDate, NETWORK } from "@/lib/stellar";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -231,7 +231,7 @@ export default function PublicSchedulePage() {
               {cliffTime && (
                 <div>
                   <p className="text-xs text-zinc-500 mb-1">Cliff Date</p>
-                  <p className="text-sm">{formatDate(cliffTime)}</p>
+                  <p className="text-sm">{formatCliffDate(schedule.cliff_duration, schedule.start_time)}</p>
                 </div>
               )}
             </div>

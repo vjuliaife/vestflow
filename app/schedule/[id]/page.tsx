@@ -2,8 +2,8 @@
 import Navbar from "@/components/Navbar";
 import VestingChart from "@/components/VestingChart";
 import NotificationSubscription from "@/components/NotificationSubscription";
-import CopyButton from "@/components/CopyButton";
 import { formatDate, NETWORK } from "@/lib/stellar";
+import { useXlmPrice, formatUsd } from "@/lib/price";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,6 +31,7 @@ export default function PublicSchedulePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [claimable, setClaimable] = useState("0");
+  const xlmPrice = useXlmPrice();
 
   useEffect(() => {
     if (!scheduleId) return;
@@ -172,13 +173,19 @@ export default function PublicSchedulePage() {
           <div className="card p-6">
             <p className="text-zinc-400 text-sm mb-2">Total Amount</p>
             <p className="text-2xl font-bold mb-1">{formatAmount(schedule.total_amount)} XLM</p>
-            <p className="text-xs text-zinc-500">{schedule.total_amount} stroops</p>
+            {xlmPrice !== null && (
+              <p className="text-zinc-400 text-sm">{formatUsd(BigInt(schedule.total_amount), xlmPrice)}</p>
+            )}
+            <p className="text-xs text-zinc-500 mt-1">{schedule.total_amount} stroops</p>
           </div>
 
           <div className="card p-6">
             <p className="text-zinc-400 text-sm mb-2">Claimed</p>
             <p className="text-2xl font-bold mb-1">{formatAmount(schedule.claimed)} XLM</p>
-            <p className="text-xs text-zinc-500">{schedule.claimed} stroops</p>
+            {xlmPrice !== null && (
+              <p className="text-zinc-400 text-sm">{formatUsd(BigInt(schedule.claimed), xlmPrice)}</p>
+            )}
+            <p className="text-xs text-zinc-500 mt-1">{schedule.claimed} stroops</p>
           </div>
 
           <div className="card p-6">
@@ -186,7 +193,12 @@ export default function PublicSchedulePage() {
             <p className="text-2xl font-bold mb-1">
               {formatAmount(String(BigInt(schedule.total_amount) - BigInt(schedule.claimed)))} XLM
             </p>
-            <p className="text-xs text-zinc-500">
+            {xlmPrice !== null && (
+              <p className="text-zinc-400 text-sm">
+                {formatUsd(BigInt(schedule.total_amount) - BigInt(schedule.claimed), xlmPrice)}
+              </p>
+            )}
+            <p className="text-xs text-zinc-500 mt-1">
               {(BigInt(schedule.total_amount) - BigInt(schedule.claimed)).toString()} stroops
             </p>
           </div>

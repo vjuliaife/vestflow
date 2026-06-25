@@ -13,6 +13,7 @@ import {
 } from "@/lib/stellar";
 import { useWallet } from "@/lib/WalletContext";
 import Link from "next/link";
+import { buildCombinedExportCSV, downloadCSV } from "@/lib/csvExport";
 
 type SortKey = "newest" | "ending-soon" | "largest-amount" | "status";
 const PAGE_SIZE = 10;
@@ -21,37 +22,6 @@ interface BeneficiaryStats {
   totalReceiving: bigint;
   claimableNow: bigint;
   activeSchedules: number;
-}
-
-function buildCSV(rows: ScheduleData[]): string {
-  const now = Math.floor(Date.now() / 1000);
-  const headers = [
-    "id", "kind", "grantor", "beneficiary", "token",
-    "total_amount_xlm", "claimed_xlm",
-    "start_date", "end_date", "cliff_date",
-    "revocable", "revoked", "status",
-  ];
-  const escape = (v: string | number | boolean) => `"${String(v).replace(/"/g, '""')}"`;
-  const dataRows = rows.map(s => {
-    const progress = vestingProgress(s, now);
-    const status = s.revoked ? "Revoked" : progress >= 100 ? "Fully Vested" : "Vesting";
-    return [
-      s.id,
-      s.kind,
-      s.grantor,
-      s.beneficiary,
-      s.token,
-      (Number(s.total_amount) / 10_000_000).toFixed(7),
-      (Number(s.claimed) / 10_000_000).toFixed(7),
-      formatDate(s.start_time),
-      formatDate(s.start_time + s.duration),
-      s.cliff_duration > 0 ? formatDate(s.start_time + s.cliff_duration) : "",
-      s.revocable,
-      s.revoked,
-      status,
-    ].map(escape).join(",");
-  });
-  return [headers.map(escape).join(","), ...dataRows].join("\n");
 }
 
 export default function BeneficiaryDashboardPage() {
@@ -141,14 +111,9 @@ export default function BeneficiaryDashboardPage() {
   const paginated = searchFiltered.slice(pageStart, pageStart + PAGE_SIZE);
 
   const handleExportCSV = () => {
-    const csv = buildCSV(schedules);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "beneficiary-vesting-schedules.csv";
-    a.click();
-    URL.revokeObjectURL(url);
+    const csv = buildCombinedExportCSV(schedules);
+    const timestamp = new Date().toISOString().split('T')[0];
+    downloadCSV(csv, `vestflow-beneficiary-${timestamp}.csv`);
   };
 
   return (

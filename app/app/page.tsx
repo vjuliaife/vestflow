@@ -236,7 +236,7 @@ export default function DashboardPage() {
   return (
     <>
       <Navbar />
-      <main className="max-w-5xl mx-auto px-6 pt-28 pb-20">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-24 sm:pt-28 pb-20">
         {/* Header row */}
         <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
           <div>

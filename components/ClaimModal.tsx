@@ -73,13 +73,13 @@ export default function ClaimModal({
 
   return (
     <div
-      className="fixed inset-0 z-[9998] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[9998] flex items-center justify-center sm:p-4 p-0"
       role="dialog"
       aria-modal="true"
       aria-label="Claim tokens confirmation"
     >
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={loading ? undefined : onClose} />
-      <div className="relative w-full max-w-md card p-6 flex flex-col gap-5 z-10">
+      <div className="relative w-full max-w-md card p-6 flex flex-col gap-5 z-10 sm:rounded-2xl rounded-t-2xl sm:m-0 mt-auto max-h-[90vh] overflow-y-auto sm:max-h-none">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold">Claim Tokens</h2>
           <button

@@ -261,10 +261,11 @@ export default function ScheduleCard({
 
       {/* Actions */}
       {publicKey && !schedule.revoked && (
-        <div className="flex gap-2 mt-1">
+        <div className="flex flex-col sm:flex-row gap-2 mt-1">
           {isBeneficiary && claimableAmt > 0n && (
-            <button onClick={() => setShowClaimModal(true)} className="btn-primary text-xs rounded-lg px-3 py-1.5 font-semibold text-white">
-              Claim {stroopsToXlm(claimableAmt)} XLM{xlmPrice !== null ? ` (${formatUsd(claimableAmt, xlmPrice)})` : ""}
+            <button onClick={() => setShowClaimModal(true)} className="btn-primary text-xs rounded-lg px-3 py-1.5 font-semibold text-white flex-1 sm:flex-auto truncate">
+              <span className="sm:hidden">Claim {stroopsToXlm(claimableAmt)} XLM</span>
+              <span className="hidden sm:inline">Claim {stroopsToXlm(claimableAmt)} XLM{xlmPrice !== null ? ` (${formatUsd(claimableAmt, xlmPrice)})` : ""}</span>
             </button>
           )}
           {isGrantor && schedule.revocable && progress < 100 && (
